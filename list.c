@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <time.h>
 
 struct list {
     int value;
@@ -96,16 +97,55 @@ void printall(struct list *list){
     printf("%d ]", list->value);
 }
 
-int main() {
+int sum_list(struct list* list){
+    int sum = 0;
+    for (int i=0; i<3000; i++){
+        sum += lindex(list, i);
+    }
+    return sum;
+}
+int sum_array(int *array){
+    int sum = 0;
+    for (int i=0; i<3000; i++){
+        sum += array[i];
+    }
+    return sum;
+}
+int sum_list2(struct list* list){
+    int sum = 0;
+    for (int i=0; i<3000; i++){
+        sum += list->value;
+        list = list->next;
+    }
+    return sum;
+}
 
-    int arr[5] = {1, 2, 3, 4, 6};
+
+
+int main() {
     
-    struct list* test = ilist(arr, 5);
-    printf("%d", len(test));
-    printf("%d", lindex(test, 2));
-    delind(test, 2);
-    append(test, 8);
-    printf("%d", pop(test));
-    printall(test);
+    int arr[3000];
+    for (int i=0; i<3000; i++){
+        arr[i] = i;
+    }
+    struct list* test = ilist(arr, 3000);
+
+    clock_t start_t = clock();
+    int sum = sum_array(arr);
+    clock_t end_t = clock();
+    printf("Array 시간 : %lld  답 : %d\n", (long long int)(end_t - start_t), sum);
+    
+    start_t = clock();
+    sum = sum_list(test);
+    end_t = clock();
+    printf("IList 시간 : %lld  답 : %d\n", (long long int)(end_t - start_t), sum);
+    
+    start_t = clock();
+    sum = sum_list2(test);
+    end_t = clock();
+    printf("IList 최적화 시간 : %lld  답 : %d\n", (long long int)(end_t - start_t), sum);
+
+    free_list(test);
+
     return 0;
 }
